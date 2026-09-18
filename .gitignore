@@ -1,0 +1,10 @@
+backend/instance/
+backend/.env
+backend/.env.*
+backend/venv/
+__pycache__/
+*.pyc
+backend/server.log
+*.log
+.pytest_cache/
+/.secrets_local/

@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — AI PORT</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/variables.css" rel="stylesheet">
+  <link href="css/main.css" rel="stylesheet">
+  <link href="css/layout.css" rel="stylesheet">
+  <link href="css/components.css" rel="stylesheet">
+  <link href="css/dashboard.css" rel="stylesheet">
+  <link href="css/pages.css" rel="stylesheet">
+  <link href="css/responsive.css" rel="stylesheet">
+</head>
+<body>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-icon"><i class="fas fa-anchor"></i></div>
+      <div class="sidebar-brand-text">
+        <h5>Smart Port</h5>
+        <small>Thoothukudi</small>
+      </div>
+    </div>
+    <nav class="sidebar-nav"></nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-user-avatar"></div>
+        <div class="sidebar-user-info">
+          <h6>Loading...</h6>
+          <small></small>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+        <div>
+          <div class="page-title">Dashboard</div>
+          <div class="breadcrumb">
+            <a href="dashboard.html">Home</a>
+            <span class="separator">/</span>
+            <span>Dashboard</span>
+          </div>
+        </div>
+      </div>
+      <div class="topbar-center">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Search ships, containers, trucks...">
+          <span class="search-shortcut">Ctrl+K</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span id="liveClock" style="font-size:0.82rem;color:var(--text-muted);font-family:monospace;margin-right:8px;"></span>
+        <button class="topbar-btn"><i class="fas fa-expand"></i></button>
+        <button class="topbar-btn" id="notifBtn">
+          <i class="fas fa-bell"></i>
+          <span class="badge-count" id="notifBadge" style="display:none;">0</span>
+        </button>
+        <div class="notification-dropdown" id="notifDropdown">
+          <div class="dropdown-header">
+            <h6>Notifications</h6>
+            <a href="#" id="markAllRead" style="font-size:0.78rem;">Mark all read</a>
+          </div>
+          <div class="notification-list" id="notifList">
+            <div class="notification-item" style="text-align:center;padding:24px;color:var(--text-muted);">
+              <p>No notifications</p>
+            </div>
+          </div>
+        </div>
+        <button class="topbar-btn"><i class="fas fa-cog"></i></button>
+        <a href="profile.html" class="topbar-btn" style="text-decoration:none;">
+          <div class="avatar avatar-sm" style="background:var(--gradient-primary);font-size:0.7rem;"></div>
+        </a>
+      </div>
+    </header>
+
+    <div class="page-content">
+      <div class="page-header">
+        <div>
+          <h2>Command Center</h2>
+          <p>Real-time overview of Thoothukudi Port operations</p>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <span id="liveDate" style="font-size:0.82rem;color:var(--text-muted);"></span>
+          <button class="btn btn-primary" onclick="refreshDashboard()"><i class="fas fa-sync-alt"></i> Refresh</button>
+          <button class="btn btn-secondary" onclick="exportDashboard()"><i class="fas fa-download"></i> Export</button>
+        </div>
+      </div>
+
+      <div class="dashboard-kpi-grid">
+        <div class="card kpi-card glow-card">
+          <div class="kpi-icon" style="background:var(--color-canvas);color:var(--color-ink-soft);"><i class="fas fa-ship"></i></div>
+          <div class="kpi-value" id="kpiShips">--</div>
+          <div class="kpi-label">Active Vessels</div>
+          <div class="kpi-change positive"><i class="fas fa-arrow-up"></i> <span id="kpiShipsChange">--</span></div>
+          <div class="kpi-bg"><i class="fas fa-ship"></i></div>
+        </div>
+        <div class="card kpi-card glow-card" id="kpiContainersCard">
+          <div class="kpi-icon" style="background:var(--color-canvas);color:var(--color-ink-soft);"><i class="fas fa-boxes-stacked"></i></div>
+          <div class="kpi-value" id="kpiContainers">--</div>
+          <div class="kpi-label">Containers Handled</div>
+          <div class="kpi-change positive"><i class="fas fa-arrow-up"></i> <span id="kpiContainersChange">--</span></div>
+          <div class="kpi-bg"><i class="fas fa-boxes-stacked"></i></div>
+        </div>
+        <div class="card kpi-card glow-card" id="kpiTrucksCard">
+          <div class="kpi-icon" style="background:var(--color-canvas);color:var(--color-ink-soft);"><i class="fas fa-truck"></i></div>
+          <div class="kpi-value" id="kpiTrucks">--</div>
+          <div class="kpi-label">Trucks In Transit</div>
+          <div class="kpi-change negative"><i class="fas fa-arrow-down"></i> <span id="kpiTrucksChange">--</span></div>
+          <div class="kpi-bg"><i class="fas fa-truck"></i></div>
+        </div>
+        <div class="card kpi-card glow-card" id="kpiAlertsCard">
+          <div class="kpi-icon" style="background:var(--danger-bg);color:var(--danger-text);"><i class="fas fa-shield-halved"></i></div>
+          <div class="kpi-value" id="kpiAlerts">--</div>
+          <div class="kpi-label">Active Alerts</div>
+          <div class="kpi-change negative"><i class="fas fa-arrow-up"></i> <span id="kpiAlertsChange">--</span></div>
+          <div class="kpi-bg"><i class="fas fa-shield-halved"></i></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:24px;margin-bottom:24px;">
+        <div class="card">
+          <div class="card-header">
+            <h6><i class="fas fa-chart-area" style="color:var(--primary-light);margin-right:8px;"></i>Port Throughput — Last 7 Days</h6>
+            <div style="display:flex;gap:6px;">
+              <button class="btn btn-sm btn-secondary" onclick="loadCharts('daily')">Daily</button>
+              <button class="btn btn-sm btn-primary" onclick="loadCharts('weekly')">Weekly</button>
+            </div>
+          </div>
+          <div class="card-body"><div style="height:280px;"><canvas id="throughputChart"></canvas></div></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:24px;">
+          <div class="card weather-widget">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+              <h6 style="margin:0;font-size:0.88rem;font-weight:600;">Weather</h6>
+              <span style="font-size:0.72rem;color:var(--text-muted);">Thoothukudi</span>
+            </div>
+            <div class="weather-main">
+              <div class="weather-icon"><i class="fas fa-cloud-sun"></i></div>
+              <div>
+                <div class="weather-temp" id="weatherTemp">--</div>
+                <div class="weather-desc" id="weatherDesc">Loading...</div>
+              </div>
+            </div>
+            <div class="weather-details">
+              <div class="weather-detail">
+                <i class="fas fa-wind"></i>
+                <span id="weatherWind">--</span>
+                <small>Wind</small>
+              </div>
+              <div class="weather-detail">
+                <i class="fas fa-droplet"></i>
+                <span id="weatherHumidity">--</span>
+                <small>Humidity</small>
+              </div>
+              <div class="weather-detail">
+                <i class="fas fa-eye"></i>
+                <span id="weatherVisibility">--</span>
+                <small>Visibility</small>
+              </div>
+            </div>
+          </div>
+          <div class="card aqi-widget">
+            <h6 style="font-size:0.88rem;font-weight:600;margin-bottom:16px;">Air Quality Index</h6>
+            <div class="aqi-circle" style="border-color:var(--success);">
+              <div class="aqi-value" id="aqiValue" style="color:var(--success);">--</div>
+              <div class="aqi-label" id="aqiLabel" style="color:var(--success);">Loading...</div>
+            </div>
+            <div class="aqi-details">
+              <div class="aqi-detail"><i class="fas fa-smog" style="color:var(--info);"></i><div><small>PM2.5</small><span id="aqiPM25">--</span></div></div>
+              <div class="aqi-detail"><i class="fas fa-wind" style="color:var(--warning);"></i><div><small>PM10</small><span id="aqiPM10">--</span></div></div>
+              <div class="aqi-detail"><i class="fas fa-flask" style="color:var(--success);"></i><div><small>NO₂</small><span id="aqiNO2">--</span></div></div>
+              <div class="aqi-detail"><i class="fas fa-fire" style="color:var(--danger);"></i><div><small>CO</small><span id="aqiCO">--</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;">
+        <div class="card">
+          <div class="card-header">
+            <h6><i class="fas fa-chart-pie" style="color:var(--info);margin-right:8px;"></i>Container Distribution</h6>
+            <button class="btn btn-sm btn-secondary" onclick="window.location.href='reports.html'">View All</button>
+          </div>
+          <div class="card-body">
+            <div style="height:240px;display:flex;align-items:center;justify-content:center;"><canvas id="containerDistChart"></canvas></div>
+          </div>
+        </div>
+        <div class="card" id="truckTrafficCard">
+          <div class="card-header">
+            <h6><i class="fas fa-chart-bar" style="color:var(--warning);margin-right:8px;"></i>Truck Traffic — Hourly</h6>
+          </div>
+          <div class="card-body"><div style="height:240px;"><canvas id="truckTrafficChart"></canvas></div></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin-bottom:24px;">
+        <div class="card">
+          <div class="card-header"><h6><i class="fas fa-ship" style="color:var(--primary-light);margin-right:8px;"></i>Vessel Status</h6></div>
+          <div class="card-body" id="vesselStatusBody">
+            <div class="ship-stat-row"><div class="label"><i class="fas fa-circle" style="color:var(--success);"></i>At Berth</div><div class="value">8</div></div>
+            <div class="ship-stat-row"><div class="label"><i class="fas fa-circle" style="color:var(--warning);"></i>Anchored</div><div class="value">6</div></div>
+            <div class="ship-stat-row"><div class="label"><i class="fas fa-circle" style="color:var(--info);"></i>In Channel</div><div class="value">4</div></div>
+            <div class="ship-stat-row"><div class="label"><i class="fas fa-circle" style="color:var(--primary);"></i>Approaching</div><div class="value">4</div></div>
+            <div class="ship-stat-row"><div class="label"><i class="fas fa-circle" style="color:var(--text-muted);"></i>Departed</div><div class="value">2</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h6><i class="fas fa-bolt" style="color:var(--warning);margin-right:8px;"></i>Quick Actions</h6></div>
+          <div class="card-body">
+            <div class="quick-actions-grid">
+              <a href="ships.html" class="quick-action-btn"><i class="fas fa-ship" style="color:var(--color-ink-soft);"></i><span>Register Ship</span></a>
+              <a href="containers.html" class="quick-action-btn"><i class="fas fa-box" style="color:var(--color-ink-soft);"></i><span>Track Container</span></a>
+              <a href="trucks.html" class="quick-action-btn"><i class="fas fa-truck" style="color:var(--color-ink-soft);"></i><span>Dispatch Truck</span></a>
+              <a href="security.html" class="quick-action-btn"><i class="fas fa-video" style="color:var(--color-ink-soft);"></i><span>View Cameras</span></a>
+              <a href="reports.html" class="quick-action-btn"><i class="fas fa-file-pdf" style="color:var(--color-ink-soft);"></i><span>Gen. Report</span></a>
+              <a href="environment.html" class="quick-action-btn"><i class="fas fa-leaf" style="color:var(--color-ink-soft);"></i><span>Env. Data</span></a>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h6><i class="fas fa-clock-rotate-left" style="color:var(--info);margin-right:8px;"></i>Recent Activity</h6></div>
+          <div class="card-body" id="recentActivityBody" style="max-height:300px;overflow-y:auto;">
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:24px;margin-bottom:24px;">
+        <div class="card">
+          <div class="card-header"><h6><i class="fas fa-map-location-dot" style="color:var(--success);margin-right:8px;"></i>Port Map Overview</h6></div>
+          <div class="card-body">
+            <div class="map-placeholder">
+              <i class="fas fa-map-location-dot"></i>
+              <span>Interactive Port Map — Thoothukudi</span>
+              <div style="position:absolute;top:20%;left:30%;width:12px;height:12px;background:var(--success);border-radius:50%;animation:pulse 2s infinite;"></div>
+              <div style="position:absolute;top:40%;left:55%;width:12px;height:12px;background:var(--primary);border-radius:50%;animation:pulse 2s infinite 0.5s;"></div>
+              <div style="position:absolute;top:60%;left:40%;width:12px;height:12px;background:var(--warning);border-radius:50%;animation:pulse 2s infinite 1s;"></div>
+              <div style="position:absolute;top:35%;left:70%;width:12px;height:12px;background:var(--danger);border-radius:50%;animation:pulse 2s infinite 1.5s;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h6><i class="fas fa-ranking-star" style="color:var(--warning);margin-right:8px;"></i>Top Berths</h6></div>
+          <div class="card-body" id="topBerthsBody">
+            <div style="margin-bottom:14px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:0.82rem;">Berth 3</span><span style="font-size:0.82rem;font-weight:600;">94%</span></div>
+              <div class="progress"><div class="progress-bar bg-primary" style="width:94%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <style>
+    @keyframes pulse { 0%,100% { transform:scale(1); opacity:1; } 50% { transform:scale(1.5); opacity:0.5; } }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/api-store.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/charts.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      applyDashboardPermissions();
+      await Store.init();
+      loadKpis();
+      loadCharts();
+      loadVesselStatus();
+      loadRecentActivity();
+      loadBerthOccupancy();
+      loadNotifications();
+    });
+
+    // Hide the stat cards/charts/feeds the logged-in role isn't permitted to
+    // see, mirroring the sidebar's own permission checks (Api.hasPermission).
+    function applyDashboardPermissions() {
+      const hide = (id) => { const el = document.getElementById(id); if (el) el.style.display = 'none'; };
+      if (!Api.hasPermission('containers.read')) hide('kpiContainersCard');
+      if (!Api.hasPermission('trucks.read')) {
+        hide('kpiTrucksCard');
+        hide('truckTrafficCard');
+      }
+      if (!Api.hasPermission('security.read')) hide('kpiAlertsCard');
+    }
+
+    async function loadNotifications() {
+      try {
+        const res = await Api.request('/dashboard/recent-activity?limit=5');
+        const items = res.data || [];
+        const badge = document.getElementById('notifBadge');
+        const list = document.getElementById('notifList');
+        if (!list) return;
+        if (items.length === 0) {
+          list.innerHTML = '<div class="notification-item" style="text-align:center;padding:24px;color:var(--text-muted);"><p>No notifications</p></div>';
+          if (badge) badge.style.display = 'none';
+          return;
+        }
+        const iconMap = { ship_arrival: 'fa-ship', container_departure: 'fa-truck', security_alert: 'fa-exclamation-triangle', maintenance: 'fa-wrench', environment: 'fa-leaf' };
+        const colorMap = { primary: 'info', success: 'success', danger: 'danger', warning: 'warning' };
+        list.innerHTML = items.map(a => `
+          <div class="notification-item unread">
+            <div class="notification-icon ${colorMap[a.color] || 'info'}"><i class="fas ${a.icon || iconMap[a.type] || 'fa-bell'}"></i></div>
+            <div class="notification-body"><h6>${Utils.escapeHtml(a.title)}</h6><p>${Utils.escapeHtml(a.description || '')}</p><small>${Utils.timeAgo(a.timestamp)}</small></div>
+          </div>`).join('');
+        if (badge) { badge.textContent = items.length; badge.style.display = 'block'; }
+      } catch (err) {
+        const alerts = Store.get('alerts');
+        const list = document.getElementById('notifList');
+        const badge = document.getElementById('notifBadge');
+        if (!list) return;
+        if (alerts.length === 0) { list.innerHTML = '<div class="notification-item" style="text-align:center;padding:24px;color:var(--text-muted);"><p>No notifications</p></div>'; if (badge) badge.style.display = 'none'; return; }
+        const colorMap = { Critical: 'danger', Warning: 'warning', Info: 'info' };
+        list.innerHTML = alerts.map(a => `
+          <div class="notification-item unread">
+            <div class="notification-icon ${colorMap[a.severity] || 'info'}"><i class="fas fa-bell"></i></div>
+            <div class="notification-body"><h6>${Utils.escapeHtml(a.title)}</h6><p>${Utils.escapeHtml(a.description || '')}</p><small>${Utils.timeAgo(a.detected_at)}</small></div>
+          </div>`).join('');
+        if (badge) { badge.textContent = alerts.length; badge.style.display = 'block'; }
+      }
+    }
+
+    async function loadKpis() {
+      const setKpi = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+      const setChange = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
+
+      try {
+        const res = await Api.request('/dashboard/kpis');
+        const k = res.data;
+        setKpi('kpiShips', k.total_ships.value);
+        setKpi('kpiContainers', k.total_containers.value);
+        setKpi('kpiTrucks', k.trucks_in_transit.value);
+        setKpi('kpiAlerts', k.active_alerts.value);
+
+        setChange('kpiShipsChange', k.total_ships.change != null ? `+${k.total_ships.change} ${k.total_ships.change_label}` : k.total_ships.change_label);
+        setChange('kpiContainersChange', k.total_containers.change != null ? `+${k.total_containers.change} ${k.total_containers.change_label}` : k.total_containers.change_label);
+        setChange('kpiTrucksChange', k.trucks_in_transit.change_label);
+        setChange('kpiAlertsChange', k.active_alerts.change != null ? `${k.active_alerts.change} ${k.active_alerts.change_label}` : k.active_alerts.change_label);
+
+        setKpi('weatherTemp', k.weather.temperature != null ? Math.round(k.weather.temperature) + '°C' : '--');
+        const descEl = document.getElementById('weatherDesc');
+        if (descEl) descEl.textContent = k.weather.condition || 'No data';
+        const windEl = document.getElementById('weatherWind');
+        if (windEl) windEl.textContent = k.weather.wind_speed != null ? k.weather.wind_speed + ' km/h' : '--';
+        const humEl = document.getElementById('weatherHumidity');
+        if (humEl) humEl.textContent = k.weather.humidity != null ? k.weather.humidity + '%' : '--';
+        const visEl = document.getElementById('weatherVisibility');
+        if (visEl) visEl.textContent = k.weather.visibility != null ? Math.round(k.weather.visibility) + ' km' : '--';
+
+        setKpi('aqiValue', k.aqi.value != null ? k.aqi.value : '--');
+        const aqiLabel = document.getElementById('aqiLabel');
+        if (aqiLabel) {
+          aqiLabel.textContent = k.aqi.category || 'No data';
+          aqiLabel.style.color = k.aqi.color === 'success' ? 'var(--success)' : k.aqi.color === 'warning' ? 'var(--warning)' : k.aqi.color === 'danger' ? 'var(--danger)' : 'var(--text-muted)';
+        }
+
+        try {
+          const aqRes = await Api.request('/environment/air-quality?per_page=1');
+          const latest = aqRes.data?.items?.[0];
+          if (latest) {
+            setKpi('aqiPM25', latest.pm25 != null ? latest.pm25.toFixed(1) : '--');
+            setKpi('aqiPM10', latest.pm10 != null ? latest.pm10.toFixed(1) : '--');
+            setKpi('aqiNO2', latest.no2 != null ? latest.no2.toFixed(1) : '--');
+            setKpi('aqiCO', latest.co != null ? latest.co.toFixed(2) : '--');
+          }
+        } catch (err) { /* leave sub-metrics at their default placeholder */ }
+      } catch (err) {
+        // Fall back to raw record counts if the aggregated KPI endpoint is unreachable.
+        const ships = Store.get('ships');
+        const containers = Store.get('containers');
+        const trucks = Store.get('trucks');
+        const alerts = Store.get('alerts');
+
+        setKpi('kpiShips', ships.filter(s => s.status !== 'Departed').length);
+        setKpi('kpiContainers', containers.length);
+        setKpi('kpiTrucks', trucks.filter(t => t.status === 'In Transit').length);
+        setKpi('kpiAlerts', alerts.filter(a => a.status === 'Active').length);
+        setChange('kpiShipsChange', '--');
+        setChange('kpiContainersChange', '--');
+        setChange('kpiTrucksChange', '--');
+        setChange('kpiAlertsChange', '--');
+      }
+    }
+
+    function loadCharts(period) {
+      const ships = Store.get('ships');
+      const containers = Store.get('containers');
+      const trucks = Store.get('trucks');
+
+      const byStatus = {};
+      ships.forEach(s => { byStatus[s.status] = (byStatus[s.status] || 0) + 1; });
+      const statusLabels = Object.keys(byStatus);
+      const statusValues = Object.values(byStatus);
+
+      const byType = {};
+      containers.forEach(c => { byType[c.container_type] = (byType[c.container_type] || 0) + 1; });
+      const typeLabels = Object.keys(byType);
+      const typeValues = Object.values(byType);
+
+      const truckByStatus = {};
+      trucks.forEach(t => { truckByStatus[t.status] = (truckByStatus[t.status] || 0) + 1; });
+
+      try {
+        const throughputCtx = document.getElementById('throughputChart');
+        if (throughputCtx) {
+          ChartFactory.createBarChart('throughputChart', statusLabels, [{ label: 'Vessels', data: statusValues }]);
+        }
+      } catch (e) {}
+
+      try {
+        const distCtx = document.getElementById('containerDistChart');
+        if (distCtx) {
+          ChartFactory.createDoughnutChart('containerDistChart', typeLabels, typeValues);
+        }
+      } catch (e) {}
+
+      try {
+        const truckCtx = document.getElementById('truckTrafficChart');
+        if (truckCtx) {
+          ChartFactory.createBarChart('truckTrafficChart', Object.keys(truckByStatus), [{ label: 'Trucks', data: Object.values(truckByStatus), backgroundColor: 'rgba(23,23,23,0.75)' }]);
+        }
+      } catch (e) {}
+    }
+
+    function loadVesselStatus() {
+      const ships = Store.get('ships');
+      const byStatus = {};
+      ships.forEach(s => { byStatus[s.status] = (byStatus[s.status] || 0) + 1; });
+      const colors = { 'At Berth': 'success', 'Anchored': 'warning', 'In Channel': 'info', 'Approaching': 'primary', 'Departed': 'text-muted', 'Scheduled': 'info', 'Loading': 'warning', 'Unloading': 'warning', 'Departing': 'primary', 'Diverted': 'danger', 'Delayed': 'danger' };
+      const entries = Object.entries(byStatus);
+      const body = document.getElementById('vesselStatusBody');
+      if (!body) return;
+      if (entries.length === 0) { body.innerHTML = '<p class="text-muted">No vessel data</p>'; return; }
+      body.innerHTML = entries.map(([status, count]) =>
+        `<div class="ship-stat-row"><div class="label"><i class="fas fa-circle" style="color:var(--${colors[status] || 'text-muted'});"></i>${status}</div><div class="value">${count}</div></div>`
+      ).join('');
+    }
+
+    function loadRecentActivity() {
+      let activity = Store.get('activity_log');
+      const typeColorMap = { ship: 'primary', berth: 'success', container: 'info', truck: 'warning', billing: 'warning', security: 'danger', system: 'info' };
+      const colorMap = { primary: 'var(--color-canvas);color:var(--color-ink-soft)', success: 'var(--success-bg);color:var(--success-text)', danger: 'var(--danger-bg);color:var(--danger-text)', warning: 'var(--warning-bg);color:var(--warning-text)', info: 'var(--info-bg);color:var(--info-text)' };
+      const body = document.getElementById('recentActivityBody');
+      if (!body) return;
+      // Don't leak security-incident items into the feed for roles without
+      // security.read -- mirrors the KPI-card gating above.
+      if (activity && !Api.hasPermission('security.read')) {
+        activity = activity.filter(a => a.type !== 'security');
+      }
+      if (!activity || activity.length === 0) { body.innerHTML = '<p class="text-muted">No recent activity</p>'; return; }
+      body.innerHTML = activity.slice(0, 10).map(a => {
+        const colorKey = typeColorMap[a.type] || 'info';
+        return `<div class="activity-item">
+          <div class="activity-icon" style="background:${colorMap[colorKey]};"><i class="fas fa-circle"></i></div>
+          <div class="activity-body"><h6>${Utils.escapeHtml(a.action)}</h6><p>${Utils.escapeHtml(a.description || '')}</p><small>${Utils.timeAgo(a.timestamp)}</small></div>
+        </div>`;
+      }).join('');
+    }
+
+    function loadBerthOccupancy() {
+      const berths = Store.get('berths');
+      const occupied = berths.filter(b => b.status === 'Occupied').sort((a, b) => {
+        const aPct = a.current_ship_id ? 100 : 0;
+        const bPct = b.current_ship_id ? 100 : 0;
+        return bPct - aPct;
+      }).slice(0, 5);
+      const body = document.getElementById('topBerthsBody');
+      if (!body) return;
+      if (occupied.length === 0) { body.innerHTML = '<p class="text-muted">No berths occupied</p>'; return; }
+      body.innerHTML = occupied.map(b => `
+        <div style="margin-bottom:14px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:0.82rem;">${b.name}</span><span style="font-size:0.82rem;font-weight:600;">${b.current_ship_id ? '100%' : '0%'}</span></div>
+          <div class="progress"><div class="progress-bar bg-${b.current_ship_id ? 'primary' : 'secondary'}" style="width:${b.current_ship_id ? 100 : 0}%"></div></div>
+        </div>`).join('');
+    }
+
+    function refreshDashboard() {
+      loadKpis();
+      loadCharts();
+      loadVesselStatus();
+      loadRecentActivity();
+      loadBerthOccupancy();
+      App.showToast('Dashboard refreshed', 'success');
+    }
+
+    function exportDashboard() {
+      const data = {
+        kpis: { ships: Store.get('ships').length, containers: Store.get('containers').length, trucks: Store.get('trucks').length, alerts: Store.get('alerts').length },
+        ships: Store.get('ships'),
+        containers: Store.get('containers'),
+        trucks: Store.get('trucks'),
+        berths: Store.get('berths'),
+      };
+      App.exportCSV([data], 'dashboard-export.json');
+      App.showToast('Dashboard data exported', 'success');
+    }
+  </script>
+</body>
+</html>

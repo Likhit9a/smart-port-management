@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reports &amp; Analytics — AI PORT</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/variables.css" rel="stylesheet">
+  <link href="css/main.css" rel="stylesheet">
+  <link href="css/layout.css" rel="stylesheet">
+  <link href="css/components.css" rel="stylesheet">
+  <link href="css/pages.css" rel="stylesheet">
+  <link href="css/responsive.css" rel="stylesheet">
+</head>
+<body>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-icon"><i class="fas fa-anchor"></i></div>
+      <div class="sidebar-brand-text">
+        <h5>Smart Port</h5>
+        <small>Thoothukudi</small>
+      </div>
+    </div>
+    <nav class="sidebar-nav"></nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-user-avatar"></div>
+        <div class="sidebar-user-info">
+          <h6>Loading...</h6>
+          <small></small>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+        <div>
+          <div class="page-title">Reports &amp; Analytics</div>
+          <div class="breadcrumb">
+            <a href="dashboard.html">Home</a>
+            <span class="separator">/</span>
+            <span>Reports &amp; Analytics</span>
+          </div>
+        </div>
+      </div>
+      <div class="topbar-center">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Search reports, analytics...">
+          <span class="search-shortcut">Ctrl+K</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span id="liveClock" style="font-size:0.82rem;color:var(--text-muted);font-family:monospace;margin-right:8px;"></span>
+        <button class="topbar-btn"><i class="fas fa-expand"></i></button>
+        <button class="topbar-btn" id="notifBtn">
+          <i class="fas fa-bell"></i>
+          <span class="badge-count" id="notifBadge" style="display:none;">0</span>
+        </button>
+        <div class="notification-dropdown" id="notifDropdown">
+          <div class="dropdown-header">
+            <h6>Notifications</h6>
+            <a href="#" id="markAllRead" style="font-size:0.78rem;">Mark all read</a>
+          </div>
+          <div class="notification-list" id="notifList">
+            <div class="notification-item" style="text-align:center;padding:24px;color:var(--text-muted);">
+              <p>No notifications</p>
+            </div>
+          </div>
+        </div>
+        <button class="topbar-btn"><i class="fas fa-cog"></i></button>
+        <a href="profile.html" class="topbar-btn" style="text-decoration:none;">
+          <div class="avatar avatar-sm" style="background:var(--gradient-primary);font-size:0.7rem;"></div>
+        </a>
+      </div>
+    </header>
+
+    <div class="page-content">
+      <div class="page-header">
+        <div>
+          <h2>Reports &amp; Analytics</h2>
+          <p>Comprehensive analytics and report generation</p>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <button class="btn btn-primary" onclick="App.showToast('Report generated successfully','success')"><i class="fas fa-sync-alt"></i> Refresh</button>
+          <button class="btn btn-secondary" onclick="App.showToast('Export started','success')"><i class="fas fa-download"></i> Export All</button>
+        </div>
+      </div>
+
+      <div class="filter-bar" style="display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap;margin-bottom:24px;padding:20px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius-lg);">
+        <div class="filter-group">
+          <label class="filter-label">From</label>
+          <input type="date" class="filter-input" value="2026-01-01">
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">To</label>
+          <input type="date" class="filter-input" value="2026-07-24">
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Report Type</label>
+          <select class="filter-select">
+            <option>All</option>
+            <option>Operations</option>
+            <option>Financial</option>
+            <option>Environmental</option>
+            <option>Security</option>
+            <option>Maintenance</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="App.showToast('Report generation started','success')">
+          <i class="fas fa-file-lines me-1"></i> Generate Report
+        </button>
+      </div>
+
+      <div class="dashboard-kpi-grid" style="margin-bottom:24px;">
+        <div class="card kpi-card glow-card">
+          <div class="kpi-icon" style="background:var(--success-bg);color:var(--success-text);"><i class="fas fa-indian-rupee-sign"></i></div>
+          <div class="kpi-value">--</div>
+          <div class="kpi-label">Total Revenue</div>
+          <div class="kpi-change positive"><i class="fas fa-arrow-up"></i> --</div>
+          <div class="kpi-bg"><i class="fas fa-indian-rupee-sign"></i></div>
+        </div>
+        <div class="card kpi-card glow-card">
+          <div class="kpi-icon" style="background:var(--color-canvas);color:var(--color-ink-soft);"><i class="fas fa-ship"></i></div>
+          <div class="kpi-value">--</div>
+          <div class="kpi-label">Ships (Last 30 Days)</div>
+          <div class="kpi-change positive"><i class="fas fa-arrow-up"></i> --</div>
+          <div class="kpi-bg"><i class="fas fa-ship"></i></div>
+        </div>
+        <div class="card kpi-card glow-card">
+          <div class="kpi-icon" style="background:var(--color-canvas);color:var(--color-ink-soft);"><i class="fas fa-boxes-stacked"></i></div>
+          <div class="kpi-value">--</div>
+          <div class="kpi-label">Container Throughput (30d)</div>
+          <div class="kpi-change positive"><i class="fas fa-arrow-up"></i> --</div>
+          <div class="kpi-bg"><i class="fas fa-boxes-stacked"></i></div>
+        </div>
+        <div class="card kpi-card glow-card">
+          <div class="kpi-icon" style="background:var(--color-canvas);color:var(--color-ink-soft);"><i class="fas fa-anchor"></i></div>
+          <div class="kpi-value">--</div>
+          <div class="kpi-label">Berths in Port</div>
+          <div class="kpi-change positive"><i class="fas fa-arrow-up"></i> --</div>
+          <div class="kpi-bg"><i class="fas fa-anchor"></i></div>
+        </div>
+      </div>
+
+      <div class="report-grid" style="margin-bottom:24px;">
+        <div class="card report-card">
+          <div class="report-icon" style="background:var(--color-canvas);color:var(--color-ink-soft);"><i class="fas fa-file-lines"></i></div>
+          <h5>Daily Operations Report</h5>
+          <p>Complete overview of daily port operations including vessel movements, cargo handling, and workforce activity.</p>
+          <div class="report-meta">
+            <span>Operations</span>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-sm btn-outline-primary" onclick="App.showToast('Feature coming soon','info')"><i class="fas fa-download me-1"></i>Download</button>
+              <button class="btn btn-sm btn-primary" onclick="App.showToast('Feature coming soon','info')"><i class="fas fa-eye me-1"></i>View</button>
+            </div>
+          </div>
+        </div>
+        <div class="card report-card">
+          <div class="report-icon" style="background:var(--success-bg);color:var(--success-text);"><i class="fas fa-file-invoice-dollar"></i></div>
+          <h5>Monthly Financial Summary</h5>
+          <p>Revenue breakdown, expense analysis, profit margins, and financial forecasting for the current period.</p>
+          <div class="report-meta">
+            <span>Financial</span>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-sm btn-outline-primary" onclick="App.showToast('Feature coming soon','info')"><i class="fas fa-download me-1"></i>Download</button>
+              <button class="btn btn-sm btn-primary" onclick="App.showToast('Feature coming soon','info')"><i class="fas fa-eye me-1"></i>View</button>
+            </div>
+          </div>
+        </div>
+        <div class="card report-card">
+          <div class="report-icon" style="background:var(--success-bg);color:var(--success-text);"><i class="fas fa-leaf"></i></div>
+          <h5>Environmental Compliance</h5>
+          <p>Air and water quality metrics, emission levels, waste management compliance, and regulatory adherence status.</p>
+          <div class="report-meta">
+            <span>Environmental</span>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-sm btn-outline-primary" onclick="App.showToast('Feature coming soon','info')"><i class="fas fa-download me-1"></i>Download</button>
+              <button class="btn btn-sm btn-primary" onclick="App.showToast('Feature coming soon','info')"><i class="fas fa-eye me-1"></i>View</button>
+            </div>
+          </div>
+        </div>
+        <div class="card report-card">
+          <div class="report-icon" style="background:var(--danger-bg);color:var(--danger-text);"><i class="fas fa-shield-halved"></i></div>
+          <h5>Security Incident Log</h5>
+          <p>All security events, breach attempts, CCTV alerts, and restricted zone violations with timestamps.</p>
+          <div class="report-meta">
+            <span>Security</span>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-sm btn-outline-primary" onclick="App.showToast('Feature coming soon','info')"><i class="fas fa-download me-1"></i>Download</button>
+              <button class="btn btn-sm btn-primary" onclick="App.showToast('Feature coming soon','info')"><i class="fas fa-eye me-1"></i>View</button>
+            </div>
+          </div>
+        </div>
+        <div class="card report-card">
+          <div class="report-icon" style="background:var(--warning-bg);color:var(--warning-text);"><i class="fas fa-wrench"></i></div>
+          <h5>Equipment Performance</h5>
+          <p>Crane utilization rates, maintenance schedules, downtime analysis, and equipment health diagnostics.</p>
+          <div class="report-meta">
+            <span>Maintenance</span>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-sm btn-outline-primary" onclick="App.showToast('Feature coming soon','info')"><i class="fas fa-download me-1"></i>Download</button>
+              <button class="btn btn-sm btn-primary" onclick="App.showToast('Feature coming soon','info')"><i class="fas fa-eye me-1"></i>View</button>
+            </div>
+          </div>
+        </div>
+        <div class="card report-card">
+          <div class="report-icon" style="background:var(--color-canvas);color:var(--color-ink-soft);"><i class="fas fa-route"></i></div>
+          <h5>Vessel Traffic Analysis</h5>
+          <p>Vessel arrival patterns, berth occupancy trends, channel congestion data, and turnaround time analysis.</p>
+          <div class="report-meta">
+            <span>Operations</span>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-sm btn-outline-primary" onclick="App.showToast('Feature coming soon','info')"><i class="fas fa-download me-1"></i>Download</button>
+              <button class="btn btn-sm btn-primary" onclick="App.showToast('Feature coming soon','info')"><i class="fas fa-eye me-1"></i>View</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-grid">
+        <div class="card">
+          <div class="card-header">
+            <h6><i class="fas fa-chart-line" style="color:var(--primary-light);margin-right:8px;"></i>Vessel Traffic by Status</h6>
+            <button class="btn btn-sm btn-secondary">FY 2025-26</button>
+          </div>
+          <div class="card-body"><div style="height:300px;"><canvas id="revenueChart"></canvas></div></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h6><i class="fas fa-chart-bar" style="color:var(--warning);margin-right:8px;"></i>Containers by Type</h6>
+          </div>
+          <div class="card-body"><div style="height:300px;"><canvas id="throughputTypeChart"></canvas></div></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:24px;">
+        <div class="card-header">
+          <h6><i class="fas fa-landmark" style="color:var(--success);margin-right:8px;"></i>Historical Port Traffic (Annual)</h6>
+          <span style="font-size:0.75rem;color:var(--text-muted);">Port authority annual statistics — reference only</span>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>Fiscal Year</th>
+                  <th>Total Cargo (MMT)</th>
+                  <th>Container TEU</th>
+                  <th>Vessel Calls</th>
+                  <th>Avg Berth Occupancy</th>
+                  <th>Avg Turnaround (hrs)</th>
+                </tr>
+              </thead>
+              <tbody id="portTrafficAnnualBody">
+                <tr><td colspan="6" class="text-center text-muted" style="padding:16px;">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:24px;">
+        <div class="card-header">
+          <h6><i class="fas fa-clock-rotate-left" style="color:var(--info);margin-right:8px;"></i>Recent Reports</h6>
+          <button class="btn btn-sm btn-secondary" onclick="App.showToast('Export started','success')"><i class="fas fa-download me-1"></i>Export Table</button>
+        </div>
+          <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0" id="recentReportsTable">
+              <thead>
+                <tr>
+                  <th>Report Name</th>
+                  <th>Type</th>
+                  <th>Generated By</th>
+                  <th>Date</th>
+                  <th>Size</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><i class="fas fa-file-pdf" style="color:var(--danger-text);margin-right:8px;"></i>Daily Ops Report — 24 Jul 2026</td>
+                  <td><span class="badge badge-nav">Operations</span></td>
+                  <td>Rajesh Admin</td>
+                  <td>24 Jul 2026, 08:00 AM</td>
+                  <td>2.4 MB</td>
+                  <td><span style="color:var(--success);font-weight:600;font-size:0.82rem;">Ready</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary me-1" onclick="App.showToast('Feature coming soon','info')"><i class="fas fa-download"></i></button>
+                    <button class="btn btn-sm btn-primary" onclick="App.showToast('Feature coming soon','info')"><i class="fas fa-eye"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><i class="fas fa-file-excel" style="color:var(--success-text);margin-right:8px;"></i>Monthly Financial Summary — Jun 2026</td>
+                  <td><span class="badge badge-nav" style="background:var(--success-bg);color:var(--success-text);">Financial</span></td>
+                  <td>Priya Finance</td>
+                  <td>01 Jul 2026, 10:30 AM</td>
+                  <td>5.1 MB</td>
+                  <td><span style="color:var(--success);font-weight:600;font-size:0.82rem;">Ready</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary me-1" onclick="App.showToast('Feature coming soon','info')"><i class="fas fa-download"></i></button>
+                    <button class="btn btn-sm btn-primary" onclick="App.showToast('Feature coming soon','info')"><i class="fas fa-eye"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><i class="fas fa-file-pdf" style="color:var(--danger-text);margin-right:8px;"></i>Environmental Compliance — Q2 2026</td>
+                  <td><span class="badge badge-nav" style="background:var(--success-bg);color:var(--success-text);">Environmental</span></td>
+                  <td>Dr. Meena Env.</td>
+                  <td>15 Jul 2026, 02:15 PM</td>
+                  <td>3.8 MB</td>
+                  <td><span style="color:var(--success);font-weight:600;font-size:0.82rem;">Ready</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary me-1" onclick="App.showToast('Feature coming soon','info')"><i class="fas fa-download"></i></button>
+                    <button class="btn btn-sm btn-primary" onclick="App.showToast('Feature coming soon','info')"><i class="fas fa-eye"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><i class="fas fa-file-shield" style="color:var(--danger-text);margin-right:8px;"></i>Security Incident Log — Jul 2026</td>
+                  <td><span class="badge badge-nav" style="background:var(--danger-bg);color:var(--danger-text);">Security</span></td>
+                  <td>Vikram Security</td>
+                  <td>20 Jul 2026, 09:45 AM</td>
+                  <td>1.9 MB</td>
+                  <td><span style="color:var(--warning);font-weight:600;font-size:0.82rem;">Processing</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-secondary me-1" disabled><i class="fas fa-download"></i></button>
+                    <button class="btn btn-sm btn-secondary" onclick="App.showToast('Feature coming soon','info')"><i class="fas fa-eye"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><i class="fas fa-file-lines" style="color:var(--warning-text);margin-right:8px;"></i>Equipment Performance — Week 29</td>
+                  <td><span class="badge badge-nav" style="background:var(--warning-bg);color:var(--warning-text);">Maintenance</span></td>
+                  <td>Suresh Maint.</td>
+                  <td>22 Jul 2026, 11:00 AM</td>
+                  <td>4.2 MB</td>
+                  <td><span style="color:var(--success);font-weight:600;font-size:0.82rem;">Ready</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary me-1" onclick="App.showToast('Feature coming soon','info')"><i class="fas fa-download"></i></button>
+                    <button class="btn btn-sm btn-primary" onclick="App.showToast('Feature coming soon','info')"><i class="fas fa-eye"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><i class="fas fa-file-pdf" style="color:var(--danger-text);margin-right:8px;"></i>Vessel Traffic Analysis — Jun 2026</td>
+                  <td><span class="badge badge-nav">Operations</span></td>
+                  <td>Rajesh Admin</td>
+                  <td>05 Jul 2026, 03:30 PM</td>
+                  <td>6.7 MB</td>
+                  <td><span style="color:var(--success);font-weight:600;font-size:0.82rem;">Ready</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary me-1" onclick="App.showToast('Feature coming soon','info')"><i class="fas fa-download"></i></button>
+                    <button class="btn btn-sm btn-primary" onclick="App.showToast('Feature coming soon','info')"><i class="fas fa-eye"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><i class="fas fa-file-excel" style="color:var(--success-text);margin-right:8px;"></i>Water Quality Report — Jul 2026</td>
+                  <td><span class="badge badge-nav" style="background:var(--success-bg);color:var(--success-text);">Environmental</span></td>
+                  <td>Dr. Meena Env.</td>
+                  <td>23 Jul 2026, 06:00 AM</td>
+                  <td>1.2 MB</td>
+                  <td><span style="color:var(--info);font-weight:600;font-size:0.82rem;">Pending</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-secondary me-1" disabled><i class="fas fa-download"></i></button>
+                    <button class="btn btn-sm btn-secondary" onclick="App.showToast('Feature coming soon','info')"><i class="fas fa-eye"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><i class="fas fa-file-pdf" style="color:var(--danger-text);margin-right:8px;"></i>Daily Ops Report — 23 Jul 2026</td>
+                  <td><span class="badge badge-nav">Operations</span></td>
+                  <td>Rajesh Admin</td>
+                  <td>23 Jul 2026, 08:00 AM</td>
+                  <td>2.3 MB</td>
+                  <td><span style="color:var(--success);font-weight:600;font-size:0.82rem;">Ready</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary me-1" onclick="App.showToast('Feature coming soon','info')"><i class="fas fa-download"></i></button>
+                    <button class="btn btn-sm btn-primary" onclick="App.showToast('Feature coming soon','info')"><i class="fas fa-eye"></i></button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/api-store.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/app.js"></script>
+    <script>
+    let revenueChart, throughputChart;
+
+    async function loadKpis() {
+      try {
+        const [billing, traffic, throughput, summary] = await Promise.all([
+          Api.request('/billing/stats'),
+          Api.request('/reports/ship-traffic?days=30'),
+          Api.request('/reports/container-throughput?days=30'),
+          Api.request('/reports/dashboard-summary')
+        ]);
+        const rev = billing.data.total_revenue || 0;
+        const revEl = document.querySelector('.kpi-card:nth-child(1) .kpi-value');
+        if (revEl) revEl.textContent = '₹' + (rev / 100000).toFixed(1) + ' L';
+        const ships = traffic.data.total_ships || 0;
+        const arr = traffic.data.arrivals || 0;
+        const shipsEl = document.querySelector('.kpi-card:nth-child(2) .kpi-value');
+        if (shipsEl) shipsEl.textContent = ships;
+        const shipsChange = document.querySelector('.kpi-card:nth-child(2) .kpi-change');
+        if (shipsChange) { shipsChange.className = 'kpi-change positive'; shipsChange.innerHTML = '<i class="fas fa-arrow-up"></i> ' + arr + ' arrivals (30d)'; }
+        const cont = throughput.data.total_containers || 0;
+        const contEl = document.querySelector('.kpi-card:nth-child(3) .kpi-value');
+        if (contEl) contEl.textContent = cont.toLocaleString();
+        const contChange = document.querySelector('.kpi-card:nth-child(3) .kpi-change');
+        if (contChange) { contChange.className = 'kpi-change positive'; contChange.innerHTML = '<i class="fas fa-arrow-up"></i> ' + (throughput.data.loaded || 0) + ' loaded'; }
+        const bs = summary.data.berths || { total: 0 };
+        const berthEl = document.querySelector('.kpi-card:nth-child(4) .kpi-value');
+        if (berthEl) berthEl.textContent = bs.total;
+        const berthChange = document.querySelector('.kpi-card:nth-child(4) .kpi-change');
+        if (berthChange) { berthChange.className = 'kpi-change positive'; berthChange.innerHTML = 'Berths in port'; }
+      } catch (err) {
+        App.showToast('Failed to load KPIs: ' + err.message, 'danger');
+      }
+    }
+
+    async function loadCharts() {
+      try {
+        const [traffic, throughput] = await Promise.all([
+          Api.request('/reports/ship-traffic?days=30'),
+          Api.request('/reports/container-throughput?days=30')
+        ]);
+
+        const tData = traffic.data || {};
+        const tLabels = Object.keys(tData.by_status || {});
+        const tValues = tLabels.map(k => tData.by_status[k]);
+
+        const cData = throughput.data || {};
+        const cLabels = Object.keys(cData.by_type || {});
+        const cValues = cLabels.map(k => cData.by_type[k]);
+
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        revenueChart = new Chart(revenueCtx, {
+          type: 'bar',
+          data: {
+            labels: tLabels.length ? tLabels : ['No data'],
+            datasets: [{
+              label: 'Vessels by Status',
+              data: tValues.length ? tValues : [0],
+              backgroundColor: 'rgba(23,23,23,0.8)',
+              borderColor: 'rgba(23,23,23,1)',
+              borderWidth: 1,
+              borderRadius: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom' } },
+            scales: {
+              y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+              x: { grid: { display: false } }
+            }
+          }
+        });
+
+        const throughputCtx = document.getElementById('throughputTypeChart').getContext('2d');
+        const palette = ['rgba(23,23,23,0.85)','rgba(22,163,74,0.8)','rgba(202,138,4,0.8)','rgba(220,38,38,0.8)','rgba(115,115,115,0.8)','rgba(37,99,235,0.8)'];
+        throughputChart = new Chart(throughputCtx, {
+          type: 'bar',
+          data: {
+            labels: cLabels.length ? cLabels : ['No data'],
+            datasets: [{
+              label: 'Containers by Type',
+              data: cValues.length ? cValues : [0],
+              backgroundColor: cLabels.map((_, i) => palette[i % palette.length]),
+              borderWidth: 1,
+              borderRadius: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { callback: v => v.toLocaleString() } },
+              x: { grid: { display: false } }
+            }
+          }
+        });
+      } catch (err) {
+        App.showToast('Failed to load charts: ' + err.message, 'danger');
+      }
+    }
+
+    async function loadRecentReports() {
+      try {
+        const res = await Api.request('/reports?page=1&per_page=8');
+        const reports = res.data.items || [];
+        const tbody = document.querySelector('#recentReportsTable tbody');
+        tbody.innerHTML = '';
+        if (!reports.length) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted);">No reports generated yet</td></tr>';
+          return;
+        }
+        reports.forEach(r => {
+          const statusColor = r.status === 'Ready' ? 'var(--success)' : r.status === 'Failed' ? 'var(--danger)' : 'var(--warning)';
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><i class="fas fa-file-pdf" style="color:var(--danger-text);margin-right:8px;"></i>${r.title}</td>
+            <td><span class="badge badge-nav">${r.report_type}</span></td>
+            <td>#${r.generated_by_id}</td>
+            <td>${new Date(r.created_at).toLocaleDateString()}</td>
+            <td>${r.file_size ? (r.file_size / 1048576).toFixed(1) + ' MB' : '—'}</td>
+            <td><span style="color:${statusColor};font-weight:600;font-size:0.82rem;">${r.status}</span></td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary me-1" onclick="App.showToast('Download started','success')"><i class="fas fa-download"></i></button>
+              <button class="btn btn-sm btn-primary" onclick="App.showToast('Viewing report','info')"><i class="fas fa-eye"></i></button>
+            </td>`;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        App.showToast('Failed to load reports: ' + err.message, 'danger');
+      }
+    }
+
+    document.querySelector('#recentReportsTable tbody').innerHTML =
+      '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted);">Loading reports...</td></tr>';
+
+    async function loadPortTrafficAnnual() {
+      const tbody = document.getElementById('portTrafficAnnualBody');
+      if (!tbody) return;
+      try {
+        const res = await Api.request('/reports/port-traffic-annual');
+        const items = res.data.items || [];
+        if (items.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted" style="padding:16px;">No data available</td></tr>';
+          return;
+        }
+        tbody.innerHTML = items.map(r => `
+          <tr>
+            <td>FY ${r.fiscal_year}</td>
+            <td>${r.total_cargo_mmt ?? '—'}</td>
+            <td>${r.container_teu != null ? r.container_teu.toLocaleString() : '—'}</td>
+            <td>${r.vessel_calls != null ? r.vessel_calls.toLocaleString() : '—'}</td>
+            <td>${r.avg_berth_occupancy_pct != null ? r.avg_berth_occupancy_pct + '%' : '—'}</td>
+            <td>${r.avg_turnaround_time_hrs ?? '—'}</td>
+          </tr>`).join('');
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted" style="padding:16px;">Unable to load port traffic history</td></tr>';
+      }
+    }
+
+    loadKpis();
+    loadCharts();
+    loadRecentReports();
+    loadPortTrafficAnnual();
+  </script>
+</body>
+</html>

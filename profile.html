@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile — AI PORT</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/variables.css" rel="stylesheet">
+  <link href="css/main.css" rel="stylesheet">
+  <link href="css/layout.css" rel="stylesheet">
+  <link href="css/components.css" rel="stylesheet">
+  <link href="css/pages.css" rel="stylesheet">
+  <link href="css/responsive.css" rel="stylesheet">
+  <link href="css/dashboard.css" rel="stylesheet">
+</head>
+<body>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-icon"><i class="fas fa-anchor"></i></div>
+      <div class="sidebar-brand-text">
+        <h5>Smart Port</h5>
+        <small>Thoothukudi</small>
+      </div>
+    </div>
+    <nav class="sidebar-nav"></nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-user-avatar"></div>
+        <div class="sidebar-user-info">
+          <h6>Loading...</h6>
+          <small></small>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+        <div>
+          <div class="page-title">User Profile</div>
+          <div class="breadcrumb">
+            <a href="dashboard.html">Home</a>
+            <span class="separator">/</span>
+            <span>User Profile</span>
+          </div>
+        </div>
+      </div>
+      <div class="topbar-center">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Search ships, containers, trucks...">
+          <span class="search-shortcut">Ctrl+K</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span id="liveClock" style="font-size:0.82rem;color:var(--text-muted);font-family:monospace;margin-right:8px;"></span>
+        <button class="topbar-btn"><i class="fas fa-expand"></i></button>
+        <button class="topbar-btn" id="notifBtn">
+          <i class="fas fa-bell"></i>
+          <span class="badge-count" id="notifBadge" style="display:none;">0</span>
+        </button>
+        <div class="notification-dropdown" id="notifDropdown">
+          <div class="dropdown-header">
+            <h6>Notifications</h6>
+            <a href="#" id="markAllRead" style="font-size:0.78rem;">Mark all read</a>
+          </div>
+          <div class="notification-list" id="notifList">
+            <div class="notification-item" style="text-align:center;padding:24px;color:var(--text-muted);">
+              <p>No notifications</p>
+            </div>
+          </div>
+        </div>
+        <button class="topbar-btn"><i class="fas fa-cog"></i></button>
+        <a href="profile.html" class="topbar-btn" style="text-decoration:none;">
+          <div class="avatar avatar-sm" style="background:var(--gradient-primary);font-size:0.7rem;"></div>
+        </a>
+      </div>
+    </header>
+
+    <div class="page-content">
+      <div class="profile-header">
+        <div class="profile-info">
+          <div class="profile-avatar" id="profileAvatar">RA</div>
+          <div class="profile-details">
+            <h3 id="profileName">Rajesh Admin</h3>
+            <div class="role" id="profileRole">Port Director</div>
+            <div class="meta">
+              <span><i class="fas fa-location-dot"></i> Thoothukudi, Tamil Nadu</span>
+              <span><i class="fas fa-envelope"></i> <span id="profileEmail">rajesh.admin@smartport.gov.in</span></span>
+              <span><i class="fas fa-phone"></i> <span id="profilePhone">+91 98765 43210</span></span>
+              <span><i class="fas fa-calendar"></i> <span id="profileMemberSince">Member since Jan 2023</span></span>
+            </div>
+          </div>
+          <div class="profile-actions">
+            <button class="btn btn-primary" onclick="App.editProfile()"><i class="fas fa-pen"></i> Edit Profile</button>
+            <button class="btn btn-secondary" onclick="document.querySelector('.profile-tab[data-tab=settings]')?.click()"><i class="fas fa-cog"></i> Settings</button>
+            <button class="btn btn-outline-danger" onclick="Api.logout()"><i class="fas fa-right-from-bracket"></i> Sign Out</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-tabs">
+        <button class="profile-tab active" data-tab="overview"><i class="fas fa-user"></i> Overview</button>
+        <button class="profile-tab" data-tab="activity"><i class="fas fa-clock-rotate-left"></i> Activity Log</button>
+        <button class="profile-tab" data-tab="settings"><i class="fas fa-cog"></i> Settings</button>
+        <button class="profile-tab" data-tab="security"><i class="fas fa-shield-halved"></i> Security</button>
+      </div>
+
+      <div id="tab-overview" class="tab-content">
+        <div class="profile-grid">
+          <div class="card" style="grid-column:1 / -1;">
+            <div class="card-header">
+              <h6><i class="fas fa-user" style="color:var(--primary-light);margin-right:8px;"></i>Personal Information</h6>
+              <button class="btn btn-sm btn-secondary" onclick="App.editProfile()"><i class="fas fa-pen"></i> Edit</button>
+            </div>
+            <div class="card-body">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                <div>
+                  <small style="color:var(--text-muted);display:block;margin-bottom:4px;">Full Name</small>
+                  <span style="font-weight:500;color:var(--text-primary);" id="infoFullName">—</span>
+                </div>
+                <div>
+                  <small style="color:var(--text-muted);display:block;margin-bottom:4px;">Email</small>
+                  <span style="font-weight:500;color:var(--text-primary);" id="infoEmail">—</span>
+                </div>
+                <div>
+                  <small style="color:var(--text-muted);display:block;margin-bottom:4px;">Phone</small>
+                  <span style="font-weight:500;color:var(--text-primary);" id="infoPhone">—</span>
+                </div>
+                <div>
+                  <small style="color:var(--text-muted);display:block;margin-bottom:4px;">Department</small>
+                  <span style="font-weight:500;color:var(--text-primary);" id="infoDepartment">—</span>
+                </div>
+                <div>
+                  <small style="color:var(--text-muted);display:block;margin-bottom:4px;">Role</small>
+                  <span style="font-weight:500;color:var(--text-primary);" id="infoRole">—</span>
+                </div>
+                <div>
+                  <small style="color:var(--text-muted);display:block;margin-bottom:4px;">Employee ID</small>
+                  <span style="font-weight:500;color:var(--text-primary);" id="infoEmployeeId">—</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:24px;">
+          <div class="card-header">
+            <h6><i class="fas fa-clock-rotate-left" style="color:var(--info);margin-right:8px;"></i>Recent Activity</h6>
+            <button class="btn btn-sm btn-secondary" onclick="document.querySelector('.profile-tab[data-tab=activity]')?.click()">View All</button>
+          </div>
+          <div class="card-body" id="recentActivityBody" style="max-height:400px;overflow-y:auto;">
+            <p class="text-center text-muted py-3">Loading...</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-settings" class="tab-content" style="display:none;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+          <div class="card">
+            <div class="settings-section">
+              <h5><i class="fas fa-bell" style="color:var(--primary-light);margin-right:8px;"></i>Notification Settings</h5>
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h6>Email Notifications</h6>
+                  <p>Receive alerts and updates via email</p>
+                </div>
+                <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+              </div>
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h6>Push Notifications</h6>
+                  <p>In-browser real-time push alerts</p>
+                </div>
+                <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+              </div>
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h6>SMS Alerts</h6>
+                  <p>Critical alerts sent via SMS</p>
+                </div>
+                <div class="toggle-switch" onclick="this.classList.toggle('active')"></div>
+              </div>
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h6>Weekly Digest</h6>
+                  <p>Summary of operations every Monday</p>
+                </div>
+                <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="settings-section">
+              <h5><i class="fas fa-palette" style="color:var(--warning);margin-right:8px;"></i>Appearance</h5>
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h6>Dark Mode</h6>
+                  <p>Use dark theme across the dashboard</p>
+                </div>
+                <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+              </div>
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h6>Compact Sidebar</h6>
+                  <p>Show icons only in sidebar navigation</p>
+                </div>
+                <div class="toggle-switch" onclick="this.classList.toggle('active')"></div>
+              </div>
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h6>Animations</h6>
+                  <p>Enable transitions and motion effects</p>
+                </div>
+                <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:24px;">
+          <div class="settings-section">
+            <h5><i class="fas fa-globe" style="color:var(--success);margin-right:8px;"></i>Language &amp; Region</h5>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;padding-top:8px;">
+              <div>
+                <label style="font-size:0.82rem;font-weight:500;display:block;margin-bottom:8px;">Language</label>
+                <select class="form-select" style="background:var(--lighter);color:var(--text-primary);border-color:var(--border-color);">
+                  <option selected>English</option>
+                  <option>Tamil</option>
+                  <option>Hindi</option>
+                  <option>Telugu</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size:0.82rem;font-weight:500;display:block;margin-bottom:8px;">Timezone</label>
+                <select class="form-select" style="background:var(--lighter);color:var(--text-primary);border-color:var(--border-color);">
+                  <option selected>IST (UTC +5:30)</option>
+                  <option>UTC (UTC +0:00)</option>
+                  <option>EST (UTC -5:00)</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size:0.82rem;font-weight:500;display:block;margin-bottom:8px;">Date Format</label>
+                <select class="form-select" style="background:var(--lighter);color:var(--text-primary);border-color:var(--border-color);">
+                  <option selected>DD/MM/YYYY</option>
+                  <option>MM/DD/YYYY</option>
+                  <option>YYYY-MM-DD</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-security" class="tab-content" style="display:none;">
+        <div class="card" style="margin-bottom:24px;">
+          <div class="settings-section">
+            <h5><i class="fas fa-key" style="color:var(--danger);margin-right:8px;"></i>Password</h5>
+            <div class="setting-item">
+              <div class="setting-info">
+                <h6>Change Password</h6>
+                <p>Last changed 45 days ago</p>
+              </div>
+              <button class="btn btn-primary" onclick="App.showToast('Password change dialog opened','info')"><i class="fas fa-pen"></i> Change Password</button>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:24px;">
+          <div class="settings-section">
+            <h5><i class="fas fa-shield-halved" style="color:var(--success);margin-right:8px;"></i>Two-Factor Authentication</h5>
+            <div class="setting-item">
+              <div class="setting-info">
+                <h6>Two-Factor Auth (2FA)</h6>
+                <p>Add an extra layer of security to your account</p>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;">
+                <span style="font-size:0.78rem;color:var(--success);font-weight:500;"><i class="fas fa-check-circle"></i> Enabled</span>
+                <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h6><i class="fas fa-desktop" style="color:var(--info);margin-right:8px;"></i>Active Sessions</h6>
+          </div>
+          <div class="card-body" style="overflow-x:auto;">
+            <table class="table" style="color:var(--text-primary);margin:0;">
+              <thead>
+                <tr style="border-bottom:1px solid var(--border-color);">
+                  <th style="font-size:0.78rem;font-weight:600;color:var(--text-muted);padding:12px 16px;">Device</th>
+                  <th style="font-size:0.78rem;font-weight:600;color:var(--text-muted);padding:12px 16px;">IP Address</th>
+                  <th style="font-size:0.78rem;font-weight:600;color:var(--text-muted);padding:12px 16px;">Last Active</th>
+                  <th style="font-size:0.78rem;font-weight:600;color:var(--text-muted);padding:12px 16px;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="activeSessionsBody">
+                <tr><td colspan="4" class="text-center text-muted" style="padding:16px;">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-activity" class="tab-content" style="display:none;">
+        <div class="card">
+          <div class="card-header">
+            <h6><i class="fas fa-clock-rotate-left" style="color:var(--info);margin-right:8px;"></i>Activity Log</h6>
+          </div>
+          <div class="card-body" style="overflow-x:auto;">
+            <table class="table" style="color:var(--text-primary);margin:0;">
+              <thead>
+                <tr style="border-bottom:1px solid var(--border-color);">
+                  <th style="font-size:0.78rem;font-weight:600;color:var(--text-muted);padding:12px 16px;">Date</th>
+                  <th style="font-size:0.78rem;font-weight:600;color:var(--text-muted);padding:12px 16px;">Action</th>
+                  <th style="font-size:0.78rem;font-weight:600;color:var(--text-muted);padding:12px 16px;">Details</th>
+                  <th style="font-size:0.78rem;font-weight:600;color:var(--text-muted);padding:12px 16px;">IP Address</th>
+                </tr>
+              </thead>
+              <tbody id="activityLogTableBody">
+                <tr><td colspan="4" class="text-center text-muted" style="padding:16px;">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+   <script src="js/utils.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/api-store.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/app.js"></script>
+   <script>
+     document.addEventListener('DOMContentLoaded', () => {
+       const tabs = document.querySelectorAll('.profile-tab');
+       const tabContents = {
+         overview: document.getElementById('tab-overview'),
+         activity: document.getElementById('tab-activity'),
+         settings: document.getElementById('tab-settings'),
+         security: document.getElementById('tab-security')
+       };
+       tabs.forEach(tab => {
+         tab.addEventListener('click', () => {
+           tabs.forEach(t => t.classList.remove('active'));
+           tab.classList.add('active');
+           Object.values(tabContents).forEach(el => el.style.display = 'none');
+           tabContents[tab.dataset.tab].style.display = '';
+         });
+       });
+       loadProfile();
+       loadRecentActivity();
+       loadActivityLog();
+       loadActiveSessions();
+     });
+
+     function activityIcon(action) {
+       const map = {
+         login: { icon: 'fa-right-to-bracket', bg: 'var(--color-canvas)', color: 'var(--color-ink-soft)', badge: 'Login' },
+         logout: { icon: 'fa-right-from-bracket', bg: 'var(--color-canvas)', color: 'var(--color-mid-gray)', badge: 'Logout' },
+         register: { icon: 'fa-user-plus', bg: 'var(--success-bg)', color: 'var(--success-text)', badge: 'Register' },
+         change_password: { icon: 'fa-key', bg: 'var(--warning-bg)', color: 'var(--warning-text)', badge: 'Password' },
+         reset_password: { icon: 'fa-key', bg: 'var(--warning-bg)', color: 'var(--warning-text)', badge: 'Password' },
+         update_profile: { icon: 'fa-user-pen', bg: 'var(--color-canvas)', color: 'var(--color-ink-soft)', badge: 'Profile' },
+       };
+       return map[action] || { icon: 'fa-clock-rotate-left', bg: 'var(--color-canvas)', color: 'var(--color-ink-soft)', badge: action };
+     }
+
+     async function loadRecentActivity() {
+       const body = document.getElementById('recentActivityBody');
+       if (!body) return;
+       try {
+         const res = await Api.request('/auth/my-activity?page=1&per_page=6');
+         const items = res.data.items || [];
+         if (items.length === 0) {
+           body.innerHTML = '<p class="text-center text-muted py-3">No activity recorded yet</p>';
+           return;
+         }
+         body.innerHTML = items.map(log => {
+           const meta = activityIcon(log.action);
+           return `<div class="activity-item">
+             <div class="activity-icon" style="background:${meta.bg};color:${meta.color};"><i class="fas ${meta.icon}"></i></div>
+             <div class="activity-body"><h6>${meta.badge}${log.status !== 'success' ? ' (failed)' : ''}</h6><p>${log.description || ''}</p><small>${Utils.timeAgo(log.created_at)}</small></div>
+           </div>`;
+         }).join('');
+       } catch (err) {
+         body.innerHTML = '<p class="text-center text-muted py-3">Unable to load activity</p>';
+       }
+     }
+
+     async function loadActivityLog() {
+       const tbody = document.getElementById('activityLogTableBody');
+       if (!tbody) return;
+       try {
+         const res = await Api.request('/auth/my-activity?page=1&per_page=25');
+         const items = res.data.items || [];
+         if (items.length === 0) {
+           tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted" style="padding:16px;">No activity recorded yet</td></tr>';
+           return;
+         }
+         tbody.innerHTML = items.map(log => {
+           const meta = activityIcon(log.action);
+           return `<tr style="border-bottom:1px solid var(--border-color);">
+             <td style="padding:12px 16px;font-size:0.85rem;">${Utils.formatDateTime(log.created_at)}</td>
+             <td style="padding:12px 16px;"><span class="badge" style="background:${meta.bg};color:${meta.color};font-size:0.75rem;">${meta.badge}</span></td>
+             <td style="padding:12px 16px;font-size:0.85rem;">${log.description || ''}</td>
+             <td style="padding:12px 16px;font-size:0.85rem;">${log.ip_address || '—'}</td>
+           </tr>`;
+         }).join('');
+       } catch (err) {
+         tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted" style="padding:16px;">Unable to load activity log</td></tr>';
+       }
+     }
+
+     async function loadActiveSessions() {
+       const tbody = document.getElementById('activeSessionsBody');
+       if (!tbody) return;
+       try {
+         const res = await Api.request('/auth/sessions');
+         const items = res.data.items || [];
+         const currentToken = Api.getToken();
+         if (items.length === 0) {
+           tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted" style="padding:16px;">No active sessions</td></tr>';
+           return;
+         }
+         tbody.innerHTML = items.map(s => {
+           const isCurrent = s.token === currentToken;
+           const device = [s.device_info?.platform, s.device_info?.browser].filter(Boolean).join(' — ') || s.user_agent || 'Unknown device';
+           const action = isCurrent
+             ? '<span class="badge" style="background:var(--success-bg);color:var(--success-text);font-size:0.72rem;">Current</span>'
+             : `<button class="btn btn-sm" style="background:rgba(231,0,11,0.1);color:var(--color-ember);font-size:0.75rem;" onclick="revokeSession(${s.id})"><i class="fas fa-right-from-bracket"></i> Revoke</button>`;
+         return `<tr style="border-bottom:1px solid var(--border-color);">
+             <td style="padding:12px 16px;font-size:0.85rem;"><i class="fas fa-desktop" style="color:var(--primary-light);margin-right:8px;"></i>${device}</td>
+             <td style="padding:12px 16px;font-size:0.85rem;">${s.ip_address || '—'}</td>
+             <td style="padding:12px 16px;font-size:0.85rem;${isCurrent ? 'color:var(--success);' : ''}">${isCurrent ? 'Active now' : Utils.timeAgo(s.created_at)}</td>
+             <td style="padding:12px 16px;">${action}</td>
+           </tr>`;
+         }).join('');
+       } catch (err) {
+         tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted" style="padding:16px;">Unable to load sessions</td></tr>';
+       }
+     }
+
+     async function revokeSession(sessionId) {
+       try {
+         await Api.request(`/auth/sessions/${sessionId}`, { method: 'DELETE' });
+         App.showToast('Session revoked', 'success');
+         loadActiveSessions();
+       } catch (err) {
+         App.showToast(err.message || 'Failed to revoke session', 'danger');
+       }
+     }
+
+     function loadProfile() {
+       const user = Store.getUser();
+       if (!user) {
+         App.showToast('No user data available', 'danger');
+         return;
+       }
+       const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.email;
+       const initials = Utils.getInitials(fullName);
+       const roleLabel = (user.role || '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+
+       const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val || '—'; };
+       const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+
+       setText('profileAvatar', initials);
+       setText('profileName', fullName);
+       setText('profileRole', roleLabel);
+       setText('profileEmail', user.email);
+       setText('profilePhone', user.phone || '—');
+       setText('profileMemberSince', user.created_at ? 'Member since ' + Utils.formatDate(user.created_at) : '—');
+
+       setText('infoFullName', fullName);
+       setText('infoEmail', user.email);
+       setText('infoPhone', user.phone || '—');
+       setText('infoDepartment', user.department || '—');
+       setText('infoRole', roleLabel);
+       setText('infoEmployeeId', user.employee_id || '—');
+
+       setVal('editFullName', fullName);
+       setVal('editEmail', user.email);
+       setVal('editPhone', user.phone || '');
+       setVal('editDepartment', user.department || '');
+       setVal('editDesignation', user.designation || '');
+       setVal('editEmployeeId', user.employee_id || '');
+     }
+
+   </script>
+</body>
+</html>

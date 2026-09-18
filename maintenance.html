@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Equipment Maintenance — AI PORT</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <div class="app-wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-icon"><i class="fas fa-anchor"></i></div>
+        <div class="sidebar-brand-text">
+          <h5>Smart Port</h5>
+          <small>Thoothukudi</small>
+        </div>
+      </div>
+      <nav class="sidebar-nav"></nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-user-avatar"></div>
+          <div class="sidebar-user-info">
+            <h6>Loading...</h6>
+            <small></small>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Topbar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+          </button>
+          <nav class="breadcrumb-nav">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="dashboard.html">Home</a></li>
+              <li class="breadcrumb-item active">Equipment Maintenance</li>
+            </ol>
+          </nav>
+        </div>
+        <div class="topbar-right">
+          <div class="search-box">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-input" placeholder="Search equipment...">
+          </div>
+          <div class="topbar-clock" id="liveClock">10:45:32</div>
+          <div class="notification-wrapper">
+            <button class="topbar-btn" id="notifBtn">
+              <i class="fas fa-bell"></i>
+              <span class="badge-count" id="notifBadge" style="display:none;">0</span>
+            </button>
+            <div class="notification-dropdown" id="notifDropdown">
+              <div class="dropdown-header">
+                <h6>Notifications</h6>
+                <a href="#" id="markAllRead" style="font-size:0.78rem;">Mark all read</a>
+              </div>
+              <div class="notification-list" id="notifList">
+                <div class="notification-item" style="text-align:center;padding:24px;color:var(--text-muted);">
+                  <p>No notifications</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="topbar-btn">
+            <i class="fas fa-cog"></i>
+          </button>
+          <a href="profile.html" class="topbar-btn" style="text-decoration:none;">
+            <div class="avatar avatar-sm" style="background:var(--gradient-primary);font-size:0.7rem;"></div>
+          </a>
+        </div>
+      </header>
+
+      <!-- Page Content -->
+      <main class="page-content">
+        <!-- Page Header -->
+        <div class="page-header">
+          <div class="page-header-left">
+            <h1 class="page-title">Equipment Maintenance</h1>
+            <p class="page-subtitle">Predictive maintenance and asset management</p>
+          </div>
+          <div class="page-header-right">
+            <button class="btn btn-primary" onclick="App.showAddScheduleModal()">
+              <i class="fas fa-plus me-2"></i>Schedule Maintenance
+            </button>
+            <button class="btn btn-outline-secondary ms-2" onclick="App.exportCSV(Store.get('maintenance_equipment') || [], 'maintenance-export.csv'); App.showToast('Exported','success')">
+              <i class="fas fa-download me-2"></i>Export Report
+            </button>
+          </div>
+        </div>
+
+        <!-- Stat Cards -->
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:24px;">
+          <div class="stat-card stat-card-primary">
+            <div class="stat-icon">
+              <i class="fas fa-cogs"></i>
+            </div>
+            <div class="stat-content">
+              <h3 class="stat-value" id="totalEquipmentStat">--</h3>
+              <p class="stat-label">Total Equipment</p>
+            </div>
+            <div class="stat-trend trend-up">
+              <i class="fas fa-arrow-up"></i> 3
+            </div>
+          </div>
+          <div class="stat-card stat-card-warning">
+            <div class="stat-icon">
+              <i class="fas fa-tools"></i>
+            </div>
+            <div class="stat-content">
+              <h3 class="stat-value" id="underMaintenanceStat">--</h3>
+              <p class="stat-label">Under Maintenance</p>
+            </div>
+            <div class="stat-trend trend-up">
+              <i class="fas fa-arrow-up"></i> 2
+            </div>
+          </div>
+          <div class="stat-card stat-card-danger">
+            <div class="stat-icon">
+              <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="stat-content">
+              <h3 class="stat-value" id="needsServiceStat">--</h3>
+              <p class="stat-label">Needs Service</p>
+            </div>
+            <div class="stat-trend trend-down">
+              <i class="fas fa-arrow-down"></i> 1
+            </div>
+          </div>
+          <div class="stat-card stat-card-success">
+            <div class="stat-icon">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+              <h3 class="stat-value" id="operationalStat">--</h3>
+              <p class="stat-label">Operational</p>
+            </div>
+            <div class="stat-trend trend-up">
+              <i class="fas fa-arrow-up"></i> 5%
+            </div>
+          </div>
+        </div>
+
+        <!-- Equipment Table -->
+        <div class="card data-table-card">
+          <div class="card-header">
+            <h5 class="card-title"><i class="fas fa-cogs me-2"></i>Equipment Inventory</h5>
+            <div class="card-actions">
+              <select class="form-select form-select-sm" id="typeFilter" style="width: auto;">
+                <option value="">All Types</option>
+                <option value="crane">Crane</option>
+                <option value="forklift">Forklift</option>
+                <option value="conveyor">Conveyor</option>
+                <option value="agv">AGV</option>
+                <option value="excavator">Excavator</option>
+              </select>
+              <select class="form-select form-select-sm ms-2" id="statusFilter" style="width: auto;">
+                <option value="">All Status</option>
+                <option value="operational">Operational</option>
+                <option value="maintenance">Maintenance</option>
+                <option value="scheduled">Scheduled</option>
+                <option value="out-of-service">Out of Service</option>
+              </select>
+              <button class="btn btn-outline-secondary btn-sm ms-2" onclick="App.exportCSV(Store.get('maintenance_equipment') || [], 'maintenance-export.csv'); App.showToast('Exported','success')">
+                <i class="fas fa-download me-1"></i>Export
+              </button>
+            </div>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover mb-0">
+                <thead>
+                  <tr>
+                    <th>Equipment ID</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Last Service</th>
+                    <th>Next Service</th>
+                    <th>Health %</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="equipmentTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="pagination-wrapper">
+              <div class="pagination-info">Showing 1-10 of 86 equipment</div>
+              <ul class="pagination mb-0">
+                <li class="page-item disabled">
+                  <a class="page-link" href="#"><i class="fas fa-chevron-left"></i></a>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item"><a class="page-link" href="#">...</a></li>
+                <li class="page-item"><a class="page-link" href="#">9</a></li>
+                <li class="page-item">
+                  <a class="page-link" href="#"><i class="fas fa-chevron-right"></i></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Maintenance Schedule & Chart Row -->
+        <div class="charts-grid">
+          <!-- Maintenance Schedule -->
+          <div class="card chart-card">
+            <div class="card-header">
+              <h5 class="card-title"><i class="fas fa-calendar-alt me-2"></i>Maintenance Schedule</h5>
+              <div class="card-actions">
+                <button class="btn btn-outline-secondary btn-sm" onclick="App.exportCSV(Store.get('maintenance_equipment') || [], 'maintenance-export.csv'); App.showToast('Exported','success')">
+                  <i class="fas fa-download me-1"></i>Export
+                </button>
+              </div>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Equipment</th>
+                      <th>Type</th>
+                      <th>Priority</th>
+                      <th>Technician</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="scheduleTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Maintenance Costs Chart -->
+          <div class="card chart-card">
+            <div class="card-header">
+              <h5 class="card-title"><i class="fas fa-chart-bar me-2"></i>Maintenance Costs by Month</h5>
+              <div class="card-actions">
+                <select class="form-select form-select-sm chart-period-select" id="costChartPeriod">
+                  <option value="12" selected>Last 12 Months</option>
+                  <option value="6">Last 6 Months</option>
+                </select>
+              </div>
+            </div>
+            <div class="card-body">
+              <canvas id="maintenanceCostChart" height="280"></canvas>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/api-store.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/app.js"></script>
+    <script>
+    // Notification dropdown toggle
+    const notifBtn = document.getElementById('notifBtn');
+    const notifDropdown = document.getElementById('notifDropdown');
+    notifBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      notifDropdown.classList.toggle('show');
+    });
+    document.addEventListener('click', function(e) {
+      if (!notifDropdown.contains(e.target) && e.target !== notifBtn) {
+        notifDropdown.classList.remove('show');
+      }
+    });
+    document.getElementById('markAllRead').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.querySelectorAll('.notif-item.unread').forEach(function(item) {
+        item.classList.remove('unread');
+      });
+      const badge = notifBtn.querySelector('.badge-count');
+      if (badge) badge.style.display = 'none';
+      App.showToast('All notifications marked as read', 'success');
+    });
+
+    // Filter by type and status — real data
+    const typeFilter = document.getElementById('typeFilter');
+    const statusFilter = document.getElementById('statusFilter');
+    const rowsPerPage = 10;
+    let currentPage = 1;
+    let equipmentData = [];
+    let filteredEquipment = [];
+
+    const EQ_TYPE_GROUP = {
+      'Ship-to-Shore Crane': 'crane', 'RTG Crane': 'crane', 'RMG Crane': 'crane', 'Mobile Harbor Crane': 'crane',
+      'Reach Stacker': 'forklift', 'Empty Handler': 'forklift', 'Forklift': 'forklift', 'Top Loader': 'forklift', 'Side Loader': 'forklift',
+      'Conveyor': 'conveyor', 'AGV': 'agv',
+      'Straddle Carrier': 'excavator', 'Terminal Tractor': 'excavator', 'Chassis': 'excavator',
+      'Generator': 'excavator', 'Pump': 'excavator', 'Compressor': 'excavator', 'HVAC System': 'excavator', 'Other': 'excavator'
+    };
+    const EQ_TYPE_ICON = { crane: 'fa-arrows-up-down text-primary', forklift: 'fa-dolly text-info', conveyor: 'fa-gears text-warning', agv: 'fa-robot text-success', excavator: 'fa-hard-hat text-danger' };
+    const EQ_STATUS_BADGE = { 'Operational': 'status-success', 'Maintenance': 'status-warning', 'Scheduled': 'status-info', 'Out of Service': 'status-danger', 'Decommissioned': 'status-danger', 'Standby': 'status-info' };
+
+    function equipmentRow(eq) {
+      const group = EQ_TYPE_GROUP[eq.equipment_type] || 'excavator';
+      const health = eq.health_percentage ?? 0;
+      const barColor = health >= 80 ? 'success' : health >= 50 ? 'warning' : 'danger';
+      return `<tr>
+        <td><span class="container-id">${eq.equipment_id}</span></td>
+        <td>${eq.name}</td>
+        <td><i class="fas ${EQ_TYPE_ICON[group]} me-1"></i>${eq.equipment_type}</td>
+        <td>${eq.location || '—'}</td>
+        <td><span class="status-badge ${EQ_STATUS_BADGE[eq.status] || 'status-info'}">${eq.status}</span></td>
+        <td>${eq.last_service_date ? Utils.formatDate(eq.last_service_date) : '—'}</td>
+        <td>${eq.next_service_date ? Utils.formatDate(eq.next_service_date) : '—'}</td>
+        <td>
+          <div class="d-flex align-items-center">
+            <div class="progress flex-grow-1 me-2" style="height: 6px; width: 80px;">
+              <div class="progress-bar bg-${barColor}" style="width: ${health}%"></div>
+            </div>
+            <small class="text-${barColor} fw-bold">${health}%</small>
+          </div>
+        </td>
+        <td>
+          <div class="action-btns">
+            <button class="btn btn-icon btn-view" title="View" onclick="App.showToast('Opening details','info')"><i class="fas fa-eye"></i></button>
+            <button class="btn btn-icon btn-edit" title="Edit" onclick="App.showToast('Opening details','info')"><i class="fas fa-pen"></i></button>
+            <button class="btn btn-icon btn-track" title="Service History" onclick="App.showToast('Opening details','info')"><i class="fas fa-history"></i></button>
+          </div>
+        </td>
+      </tr>`;
+    }
+
+    function getFilteredRows() {
+      const typeVal = typeFilter.value;
+      const statusVal = statusFilter.value.replace('-', ' ');
+      return equipmentData.filter(function(eq) {
+        const matchType = !typeVal || (EQ_TYPE_GROUP[eq.equipment_type] || '') === typeVal;
+        const matchStatus = !statusVal || String(eq.status).toLowerCase() === statusVal;
+        return matchType && matchStatus;
+      });
+    }
+
+    function renderTable() {
+      filteredEquipment = getFilteredRows();
+      const totalPages = Math.max(1, Math.ceil(filteredEquipment.length / rowsPerPage));
+      if (currentPage > totalPages) currentPage = totalPages;
+      const start = (currentPage - 1) * rowsPerPage;
+      const end = start + rowsPerPage;
+      document.getElementById('equipmentTableBody').innerHTML = filteredEquipment.slice(start, end).map(equipmentRow).join('');
+      document.querySelector('.pagination-info').textContent = 'Showing ' + (filteredEquipment.length === 0 ? 0 : start + 1) + '-' + Math.min(end, filteredEquipment.length) + ' of ' + filteredEquipment.length + ' equipment';
+      renderPagination(totalPages, filteredEquipment.length);
+    }
+
+    async function loadEquipment() {
+      try {
+        const res = await Api.request('/maintenance?page=1&per_page=200');
+        equipmentData = res.data.items || [];
+      } catch (err) {
+        App.showToast('Failed to load equipment', 'danger');
+        equipmentData = [];
+      }
+      document.getElementById('totalEquipmentStat').textContent = equipmentData.length;
+      document.getElementById('underMaintenanceStat').textContent = equipmentData.filter(e => e.status === 'Maintenance').length;
+      document.getElementById('needsServiceStat').textContent = equipmentData.filter(e => (e.health_percentage ?? 100) < 60).length;
+      document.getElementById('operationalStat').textContent = equipmentData.filter(e => e.status === 'Operational').length;
+      renderTable();
+    }
+
+    async function loadSchedule() {
+      try {
+        const res = await Api.request('/maintenance/schedules?page=1&per_page=20');
+        const items = res.data.items || [];
+        const PRIORITY_BADGE = { 'Low': 'status-info', 'Medium': 'status-info', 'High': 'status-warning', 'Critical': 'status-danger' };
+        const STATUS_BADGE = { 'Scheduled': 'status-info', 'In Progress': 'status-warning', 'On Hold': 'status-warning', 'Completed': 'status-success', 'Cancelled': 'status-info', 'Overdue': 'status-danger' };
+        const TYPE_BADGE = { 'Preventive': 'bg-info', 'Corrective': 'bg-warning', 'Predictive': 'bg-success', 'Emergency': 'bg-danger', 'Overhaul': 'bg-danger', 'Inspection': 'bg-info', 'Calibration': 'bg-info' };
+        document.getElementById('scheduleTableBody').innerHTML = items.map(s => `
+          <tr>
+            <td>${s.scheduled_date ? Utils.formatDate(s.scheduled_date) : '—'}</td>
+            <td>${s.equipment_name ? Utils.escapeHtml(s.equipment_name) + (s.equipment_code ? ' <small style="color:var(--text-muted);">(' + Utils.escapeHtml(s.equipment_code) + ')</small>' : '') : 'Equipment #' + s.equipment_id}</td>
+            <td><span class="badge ${TYPE_BADGE[s.maintenance_type] || 'bg-info'}">${s.maintenance_type}</span></td>
+            <td><span class="status-badge ${PRIORITY_BADGE[s.priority] || 'status-info'}">${s.priority}</span></td>
+            <td>${s.assigned_technician_name ? Utils.escapeHtml(s.assigned_technician_name) : '—'}</td>
+            <td><span class="status-badge ${STATUS_BADGE[s.status] || 'status-info'}">${s.status}</span></td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        App.showToast('Failed to load schedule', 'danger');
+      }
+    }
+
+    function renderPagination(totalPages, totalItems) {
+      const pagination = document.querySelector('.pagination');
+      let html = '<li class="page-item' + (currentPage <= 1 ? ' disabled' : '') + '"><a class="page-link" href="#" id="prevPage"><i class="fas fa-chevron-left"></i></a></li>';
+      const maxVisible = 5;
+      let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+      let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+      if (endPage - startPage < maxVisible - 1) startPage = Math.max(1, endPage - maxVisible + 1);
+      if (startPage > 1) {
+        html += '<li class="page-item"><a class="page-link" href="#" data-page="1">1</a></li>';
+        if (startPage > 2) html += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+      }
+      for (let i = startPage; i <= endPage; i++) {
+        html += '<li class="page-item' + (i === currentPage ? ' active' : '') + '"><a class="page-link" href="#" data-page="' + i + '">' + i + '</a></li>';
+      }
+      if (endPage < totalPages) {
+        if (endPage < totalPages - 1) html += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+        html += '<li class="page-item"><a class="page-link" href="#" data-page="' + totalPages + '">' + totalPages + '</a></li>';
+      }
+      html += '<li class="page-item' + (currentPage >= totalPages ? ' disabled' : '') + '"><a class="page-link" href="#" id="nextPage"><i class="fas fa-chevron-right"></i></a></li>';
+      pagination.innerHTML = html;
+      pagination.querySelector('#prevPage') && pagination.querySelector('#prevPage').addEventListener('click', function(e) {
+        e.preventDefault();
+        if (currentPage > 1) { currentPage--; renderTable(); }
+      });
+      pagination.querySelector('#nextPage') && pagination.querySelector('#nextPage').addEventListener('click', function(e) {
+        e.preventDefault();
+        if (currentPage < totalPages) { currentPage++; renderTable(); }
+      });
+      pagination.querySelectorAll('[data-page]').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          currentPage = parseInt(this.getAttribute('data-page'));
+          renderTable();
+        });
+      });
+    }
+
+    typeFilter.addEventListener('change', function() { currentPage = 1; renderTable(); });
+    statusFilter.addEventListener('change', function() { currentPage = 1; renderTable(); });
+    loadEquipment();
+    loadSchedule();
+
+    // Maintenance Costs Bar Chart — real monthly totals from actual/estimated schedule costs
+    async function loadMaintenanceCostChart() {
+      let labels = [];
+      let data = [];
+      try {
+        const res = await Api.request('/maintenance/cost-by-month?months=6');
+        labels = res.data.labels || [];
+        data = res.data.datasets[0]?.data || [];
+      } catch (err) {
+        App.showToast('Unable to load maintenance cost chart', 'warning');
+      }
+      const costCtx = document.getElementById('maintenanceCostChart').getContext('2d');
+      new Chart(costCtx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Maintenance Cost',
+            data: data,
+            backgroundColor: 'rgba(23, 23, 23, 0.8)',
+            borderColor: 'rgba(23, 23, 23, 1)',
+            borderWidth: 1,
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return 'Cost: ₹' + context.parsed.y.toLocaleString();
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: 'rgba(0,0,0,0.05)' },
+              ticks: {
+                callback: function(value) {
+                  return '₹' + (value / 1000) + 'K';
+                }
+              }
+            },
+            x: {
+              grid: { display: false }
+            }
+          }
+        }
+      });
+    }
+    loadMaintenanceCostChart();
+  </script>
+</body>
+</html>
