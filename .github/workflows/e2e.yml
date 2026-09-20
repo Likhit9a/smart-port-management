@@ -2,8 +2,7 @@ name: E2E tests (production)
 
 on:
   schedule:
-    # Nightly at 03:30 UTC (~9:00 AM IST), an off-peak hour, offset from
-    # the top of the hour for the same reason keep-alive.yml is.
+    # Nightly at 03:30 UTC (~9:00 AM IST)
     - cron: '30 3 * * *'
   workflow_dispatch: {}
 
@@ -11,14 +10,16 @@ jobs:
   e2e:
     name: Playwright suite against production
     runs-on: ubuntu-latest
+
     defaults:
       run:
         working-directory: e2e
+
     steps:
-      # The `secrets` context can't be referenced in a job/step `if:` at
-      # all (GitHub Actions rejects the whole workflow file if you try),
-      # so "skip until the secret exists" has to be a runtime check
-      # inside a step, gating the steps after it via its output.
+      # Checkout FIRST so that the e2e/ directory exists
+      - uses: actions/checkout@v4
+
+      # Check whether the E2E password has been configured
       - name: Check E2E secret is configured
         id: check
         run: |
@@ -28,9 +29,6 @@ jobs:
             echo "configured=false" >> "$GITHUB_OUTPUT"
             echo "::warning::E2E_PASSWORD not set -- skipping this run. Add it under Settings > Secrets and variables > Actions to enable this job."
           fi
-
-      - uses: actions/checkout@v4
-        if: steps.check.outputs.configured == 'true'
 
       - uses: actions/setup-node@v4
         if: steps.check.outputs.configured == 'true'
